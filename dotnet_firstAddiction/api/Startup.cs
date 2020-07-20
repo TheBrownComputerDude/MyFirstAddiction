@@ -1,3 +1,5 @@
+using api.common.Db;
+using api.Models;
 using GraphiQl;
 using Lamar;
 using MediatR;
@@ -22,6 +24,7 @@ namespace api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMediatR(typeof(Startup));
+            services.AddDbContext<FirstAddictionContext>();
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -30,6 +33,15 @@ namespace api
 
         public void ConfigureContainer(ServiceRegistry services)
         {
+            services.For<IDbManager>().Use(new DbManager("localhost", "root", "root", "FirstAddiction"));
+            
+            var container = new Container(services);
+
+            // services.For(typeof(FirstAddictionContext)).Use(new FirstAddictionContext(container.GetInstance<IDbManager>()));
+            services.For<FirstAddictionContext>().Use(new FirstAddictionContext(container.GetInstance<IDbManager>()));
+
+            services.ForConcreteType<FirstAddictionContext>();
+
             services.Scan(s => {
                s.TheCallingAssembly();
                s.WithDefaultConventions();
