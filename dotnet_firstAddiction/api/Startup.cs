@@ -33,12 +33,14 @@ namespace api
 
         public void ConfigureContainer(ServiceRegistry services)
         {
-            services.For<IDbManager>().Use(new DbManager("localhost", "root", "root", "FirstAddiction"));
+            //Hard coded for now but should probably read from a config file.
+            services.For<IDbManager>()
+                .Use(new DbManager("localhost", "root", "root", "FirstAddiction"));
             
             var container = new Container(services);
 
-            // services.For(typeof(FirstAddictionContext)).Use(new FirstAddictionContext(container.GetInstance<IDbManager>()));
-            services.For<FirstAddictionContext>().Use(new FirstAddictionContext(container.GetInstance<IDbManager>()));
+            services.For<FirstAddictionContext>()
+            .Use(new FirstAddictionContext(container.GetInstance<IDbManager>()));
 
             services.ForConcreteType<FirstAddictionContext>();
 
