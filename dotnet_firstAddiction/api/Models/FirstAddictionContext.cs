@@ -11,6 +11,8 @@ namespace api.Models
         }
 
         private IDbManager Manager { get; set; }
+
+        public DbSet<User> User { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,6 +22,15 @@ namespace api.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>(e => 
+            {
+                e.HasKey(u => u.Id);
+                e.Property(u => u.Username).IsRequired();
+                e.Property(u => u.Email).IsRequired();
+                e.Property(u => u.Password).IsRequired();
+                e.Property(u => u.Salt).IsRequired();
+            });
         }
     }
 }
