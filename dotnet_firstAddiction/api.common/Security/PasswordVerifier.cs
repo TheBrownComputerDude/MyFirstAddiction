@@ -16,6 +16,12 @@ namespace api.common.Security
                 };
         }
 
+        public bool Validate(string checkPassword, string salt, string password)
+        {
+            var hash = this.GenerateHash(checkPassword, Convert.FromBase64String(salt));
+            return hash == password;
+        }
+
         private byte[] GenerateSalt()
         {
             byte[] salt = new byte[128 / 8];

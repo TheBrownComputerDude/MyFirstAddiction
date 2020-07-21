@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Commands
 {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Dtos.User>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CommandResponse>
     {
         public CreateUserCommandHandler(
             IMapper mapper,
@@ -27,15 +27,15 @@ namespace api.Commands
 
         private FirstAddictionContext Context { get; }
 
-        public Task<Dtos.User> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<CommandResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var response = this.Context.User
+            var response = await this.Context.User
                 .Where(u => u.Username == request.Username || u.Email == request.Email)
-                .SingleOrDefault();
+                .SingleOrDefaultAsync();
             
             if (response != null)
             {
-                return null;
+                return CommandResponse.Failed;
             }
 
             var passResponse = this.Verifier.HashPassword(request.Password);
@@ -51,7 +51,7 @@ namespace api.Commands
             this.Context.Add(newUser);
             this.Context.SaveChanges();
 
-            return Task.FromResult(this.Mapper.Map<Dtos.User>(newUser));
+            return CommandResponse.Success;
         }
     }
 }

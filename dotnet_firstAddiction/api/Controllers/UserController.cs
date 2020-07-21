@@ -17,7 +17,8 @@ namespace api.Controllers
         private IMediator Mediator { get; }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateUser(string username, string email, string password)
+        public async Task<IActionResult> CreateUser(
+            [FromBody]string username, [FromBody]string email, [FromBody]string password)
         {
             var response = await this.Mediator.Send(new CreateUserCommand()
             {
@@ -25,7 +26,24 @@ namespace api.Controllers
                 Email = email,
                 Password = password
             });
-            if (response is null)
+            if (response == CommandResponse.Failed)
+            {
+                return this.BadRequest();
+            }
+
+            return this.Ok();
+        }
+
+        [HttpGet("login")]
+        public async Task<IActionResult> Login([FromBody]string username, [FromBody]string password)
+        {
+            var response = await this.Mediator.Send(new LoginCommand()
+            {
+                Username = username,
+                Password = password
+            });
+
+            if (response == CommandResponse.Failed)
             {
                 return this.BadRequest();
             }
