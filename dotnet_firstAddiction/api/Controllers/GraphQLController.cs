@@ -36,6 +36,5 @@ namespace api.Controllers
 
             return Ok(result);
         }
-
     }
 }

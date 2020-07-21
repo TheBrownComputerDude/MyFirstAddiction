@@ -4,6 +4,6 @@ namespace api.Commands
     {
         public CommandResponse Response { get; set; }
 
-        public string Username { get; set; }
+        public int UserId { get; set; }
     }
 }

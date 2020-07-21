@@ -1,5 +1,6 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,7 +64,7 @@ namespace api.Controllers
                 return this.Unauthorized();
             }
 
-            var token = this.GenerateJSONWebToken(response.Username);
+            var token = this.GenerateJSONWebToken(response.UserId);
             return this.Ok(new { token });
         }
 
@@ -71,15 +72,16 @@ namespace api.Controllers
         [Authorize]
         public IActionResult Test()
         {
-            return this.Ok("It works.");
+            var currentUser = HttpContext.User;
+            var id = currentUser.Claims.FirstOrDefault(c => c.Type == "UserId");
+            return this.Ok($"It works. User id is {id}");
         }
-        private string GenerateJSONWebToken(string userInfo)    
+        private string GenerateJSONWebToken(int userId)    
         {    
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config["Jwt:Key"]));    
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);    
-
             var claims = new[] {    
-                new Claim(JwtRegisteredClaimNames.Sub, userInfo)
+                new Claim("UserId", userId.ToString())
             };
 
             var token = new JwtSecurityToken(Config["Jwt:Issuer"],    

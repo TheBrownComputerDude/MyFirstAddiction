@@ -46,7 +46,7 @@ namespace api.Commands
             if (this.Verifier.Validate(request.Password, user.Salt, user.Password))
             {
                 response.Response = CommandResponse.Success;
-                response.Username = user.Username;
+                response.UserId = user.Id;
                 return response;
             }
 
