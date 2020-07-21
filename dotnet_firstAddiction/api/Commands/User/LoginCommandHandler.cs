@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Commands
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, CommandResponse>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
     {
         public LoginCommandHandler(
             FirstAddictionContext context,
@@ -27,23 +27,30 @@ namespace api.Commands
 
         private IMapper Mapper { get; }
 
-        public async Task<CommandResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<LoginResult> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var user = await this.Context.User
                 .Where(u => u.Username == request.Username)
                 .SingleOrDefaultAsync();
 
+            var response = new LoginResult()
+            {
+                Response = CommandResponse.Failed
+            };
+
             if (user is null)
             {
-                return CommandResponse.Failed;
+                return response;
             }
 
             if (this.Verifier.Validate(request.Password, user.Salt, user.Password))
             {
-                return CommandResponse.Success;
+                response.Response = CommandResponse.Success;
+                response.Username = user.Username;
+                return response;
             }
 
-            return CommandResponse.Failed;
+            return response;
         }
     }
 }

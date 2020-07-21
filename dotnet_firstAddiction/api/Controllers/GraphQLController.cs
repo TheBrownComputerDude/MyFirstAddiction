@@ -1,12 +1,14 @@
 using System.Threading.Tasks;
 using api.Schema;
 using GraphQL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
 {
     [Route("graphql")]
     [ApiController]
+    // [Authorize]
     public class GraphQLController : Controller
     {
         public async Task<IActionResult> Post([FromBody] GraphQLQuery query)

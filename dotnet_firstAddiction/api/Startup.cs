@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using api.common.Db;
 using api.common.Security;
 using api.Models;
@@ -7,12 +8,14 @@ using AutoMapper;
 using GraphiQl;
 using Lamar;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api
 {
@@ -33,13 +36,37 @@ namespace api
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)    
+                .AddJwtBearer(options =>    
+                {    
+                    options.TokenValidationParameters = new TokenValidationParameters    
+                    {    
+                        ValidateIssuer = true,    
+                        ValidateAudience = true,    
+                        ValidateLifetime = true,    
+                        ValidateIssuerSigningKey = true,    
+                        ValidIssuer = Configuration["Jwt:Issuer"],    
+                        ValidAudience = Configuration["Jwt:Issuer"],    
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))    
+                    };    
+                });
+            // services.AddAuthorization(options =>
+            // {
+            //     options.AddPolicy("UserPolicy",
+            //                     policy => policy.RequireClaim("sub"));
+            // });
         }
 
         public void ConfigureContainer(ServiceRegistry services)
         {
             //Hard coded for now but should probably read from a config file.
             services.For<IDbManager>()
-                .Use(new DbManager("localhost", "root", "root", "FirstAddiction"));
+                .Use(new DbManager(
+                    Configuration["Db:server"],
+                    Configuration["Db:username"],
+                    Configuration["Db:password"],
+                    Configuration["Db:name"]));
 
             services.For<IPasswordVerifier>().Use<PasswordVerifier>();
 
@@ -76,7 +103,8 @@ namespace api
             }
 
             // app.UseHttpsRedirection();
-
+            // app.UseAuthorization();
+            app.UseAuthentication();
             app.UseRouting();
 
             app.UseAuthorization();

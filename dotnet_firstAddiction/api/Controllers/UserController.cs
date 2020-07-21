@@ -1,24 +1,38 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using api.Commands;
+using api.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api.Controllers
 {
     [Route("user")]
+    [ApiController]
     public class UserController : Controller
     {
         public UserController(
-            IMediator mediator)
+            IMediator mediator,
+            IConfiguration config)
         {
             this.Mediator = mediator;
+            this.Config = config;
         }
 
         private IMediator Mediator { get; }
 
+        private IConfiguration Config { get; }
+
         [HttpPost("create")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateUser(
-            [FromBody]string username, [FromBody]string email, [FromBody]string password)
+            string username, string email, string password)
         {
             var response = await this.Mediator.Send(new CreateUserCommand()
             {
@@ -35,7 +49,8 @@ namespace api.Controllers
         }
 
         [HttpGet("login")]
-        public async Task<IActionResult> Login([FromBody]string username, [FromBody]string password)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(string username, string password)
         {
             var response = await this.Mediator.Send(new LoginCommand()
             {
@@ -43,12 +58,37 @@ namespace api.Controllers
                 Password = password
             });
 
-            if (response == CommandResponse.Failed)
+            if (response.Response == CommandResponse.Failed)
             {
-                return this.BadRequest();
+                return this.Unauthorized();
             }
 
-            return this.Ok();
+            var token = this.GenerateJSONWebToken(response.Username);
+            return this.Ok(new { token });
         }
+
+        [HttpGet("test")]
+        [Authorize]
+        public IActionResult Test()
+        {
+            return this.Ok("It works.");
+        }
+        private string GenerateJSONWebToken(string userInfo)    
+        {    
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config["Jwt:Key"]));    
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);    
+
+            var claims = new[] {    
+                new Claim(JwtRegisteredClaimNames.Sub, userInfo)
+            };
+
+            var token = new JwtSecurityToken(Config["Jwt:Issuer"],    
+              Config["Jwt:Issuer"],    
+              claims,    
+              expires: DateTime.Now.AddMinutes(120),    
+              signingCredentials: credentials);    
+    
+            return new JwtSecurityTokenHandler().WriteToken(token);    
+        }    
     }
 }

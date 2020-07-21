@@ -1,9 +1,8 @@
-using api.Dtos;
 using MediatR;
 
 namespace api.Commands
 {
-    public class LoginCommand : IRequest<CommandResponse>
+    public class LoginCommand : IRequest<LoginResult>
     {
         public string Username { get; set; }
 
