@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class RequestManager {
   RequestManager._();
   static final RequestManager web = RequestManager._();
-  static final String baseUrl = "http://192.168.3.106:8000/";
+  static final String baseUrl = "http://192.168.0.48:8080/";
   static final String userUrl = baseUrl + "user/";
   String token = "";
 
