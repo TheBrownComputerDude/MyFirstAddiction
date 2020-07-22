@@ -51,7 +51,7 @@ namespace api.Controllers
 
         [HttpGet("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login([FromHeader]string username, [FromHeader]string password)
         {
             var response = await this.Mediator.Send(new LoginCommand()
             {
@@ -76,7 +76,8 @@ namespace api.Controllers
             var id = currentUser.Claims.FirstOrDefault(c => c.Type == "UserId");
             return this.Ok($"It works. User id is {id}");
         }
-        private string GenerateJSONWebToken(int userId)    
+
+        private string GenerateJSONWebToken(int userId)
         {    
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config["Jwt:Key"]));    
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);    
