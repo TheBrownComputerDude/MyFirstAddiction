@@ -38,7 +38,11 @@ class MyApp extends StatelessWidget {
               return _result ? new HomePage() : new LoginPage();
               break;
             default:
-              return new Container(child: new Text("waiting"),);
+              return new Scaffold(
+                body: new Container(
+                  child: new Text("waiting"),
+                ),
+              );
           }
         }
       ),
