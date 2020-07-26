@@ -29,6 +29,13 @@ namespace api.Commands
 
         public async Task<CommandResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
+            if (
+                string.IsNullOrEmpty(request.Username) ||
+                string.IsNullOrEmpty(request.Email) ||
+                string.IsNullOrEmpty(request.Password))
+            {
+                return CommandResponse.Failed;
+            }
             var response = await this.Context.User
                 .Where(u => u.Username == request.Username || u.Email == request.Email)
                 .SingleOrDefaultAsync();

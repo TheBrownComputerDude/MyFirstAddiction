@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class RequestManager {
   RequestManager._();
   static final RequestManager web = RequestManager._();
-  static final String baseUrl = "http://192.168.3.106:8000/";
+  static final String baseUrl = "http://192.168.0.41/";
   static final String userUrl = baseUrl + "user/";
   String token = "";
 
@@ -46,23 +46,12 @@ class RequestManager {
     token = "";
   }
 
-  // Future<List<Recipe>> requestRecipes(List<String> i) async {
-  //   var q = "?ingreidients=";
-  //   for (String s in i) {
-  //     q += s + ",";
-  //   }
-
-  //   var response = await http.get(serverUrl + q);
-  //   List<Recipe> result = [];
-  //   // result.add(Recipe.fromJson(jsonDecode(response.body)));
-  //   for (var i in jsonDecode(response.body)) {
-  //     result.add(Recipe.fromJson(i));
-  //   }
-
-  //   if (response.statusCode == 200)
-  //   {
-  //     return result;
-  //   }
-  //   return [];
-  // }
+  Future<bool> registerRequest(String username, String email, String password) async {
+    var response = await http.post(
+      userUrl + "create/?username=${username}&email=${email}&password=${password}");
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+  }
 }

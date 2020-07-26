@@ -3,6 +3,7 @@ import 'package:flutter_first_addiction/Managers/RequestManager.dart';
 import 'package:flutter_first_addiction/Widgets/loginPage.dart';
 
 import 'Widgets/homePage.dart';
+import 'Widgets/registerPage.dart';
 
 void main() async {
   runApp(MyApp());
@@ -13,20 +14,13 @@ class MyApp extends StatelessWidget {
   MyApp();
 
   Future doLogin() async {
-    print("hello");
     await RequestManager.web.autoLogin();
-    print("pt2");
     _result = await RequestManager.web.checkLogin();
-    print(_result);
   }
 
 
   @override
   Widget build(BuildContext context) {
-    // Widget _defaultHome = new LoginPage();
-    // if (_result) {
-    //   _defaultHome = new HomePage();
-    // }
 
     return MaterialApp(
       title: 'First Addiction',
@@ -50,7 +44,8 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
       // Set routes for using the Navigator.
         '/home': (BuildContext context) => new HomePage(),
-        '/login': (BuildContext context) => new LoginPage()
+        '/login': (BuildContext context) => new LoginPage(),
+        '/register': (BuildContext context) => new RegisterPage(),
       },
     );
   }
