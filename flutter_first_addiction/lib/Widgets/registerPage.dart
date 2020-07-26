@@ -82,6 +82,11 @@ class RegisterPageState extends State<RegisterPage> {
                   });
                   return;
                 }
+                if (password.text != passwordConfirm.text) {
+                  setState(() {
+                    warningMsg = "passwords do not match";
+                  });
+                }
 
                 RequestManager.web.registerRequest(username.text, email.text, password.text)
                   .then((value) {
