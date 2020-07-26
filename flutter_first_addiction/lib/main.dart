@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_first_addiction/Managers/RequestManager.dart';
 import 'package:flutter_first_addiction/Widgets/loginPage.dart';
@@ -5,13 +6,13 @@ import 'package:flutter_first_addiction/Widgets/loginPage.dart';
 import 'Widgets/homePage.dart';
 import 'Widgets/registerPage.dart';
 
+
 void main() async {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   bool _result;
-  MyApp();
 
   Future doLogin() async {
     await RequestManager.web.autoLogin();
