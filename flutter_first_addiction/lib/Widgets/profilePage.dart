@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_first_addiction/Managers/RequestManager.dart';
+import 'package:flutter_first_addiction/Widgets/getHandleNamePage.dart';
 import 'package:flutter_first_addiction/Widgets/videoPreview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:thumbnails/thumbnails.dart';
@@ -17,17 +19,29 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
 
+  String handle = '';
+
   Future<List<FileSystemEntity>> getAllVideos() async {
+    handle = await RequestManager.web.getInfo();
+    if(handle.isEmpty){
+      Navigator.push(context, 
+       new MaterialPageRoute(
+              builder: (context) => new GetHandleNamePage()));
+        
+    }
     final Directory extDir = await getApplicationDocumentsDirectory();
     final String dirPath = '${extDir.path}/media';
     final myDir = Directory(dirPath);
     List<FileSystemEntity> _images;
-    _images = myDir.listSync(recursive: true, followLinks: false);
-    _images.sort((a, b) {
-      return b.path.compareTo(a.path);
-    });
+    if( await myDir.exists()){
+      _images = myDir.listSync(recursive: true, followLinks: false);
+      _images.sort((a, b) {
+        return b.path.compareTo(a.path);
+      });
+    }
 
     return _images;
+
   }
 
   Future<Uint8List> getThumbnail(String path) async {

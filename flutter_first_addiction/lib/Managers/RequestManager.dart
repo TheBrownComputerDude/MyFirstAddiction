@@ -64,6 +64,19 @@ class RequestManager {
       return false;
   }
 
+  Future<String> getInfo() async {
+    var uri = await getUserEndpoint() + "user/getInfo";
+
+    var op = new Options(headers: {
+      HttpHeaders.authorizationHeader:"Bearer " + token
+    });
+    var response = await dio.get(uri, options: op);
+    if(response.statusCode == 204){
+      return '';
+    }
+    return response.data["Handle Name"];
+  }
+
   Future<bool> uploadVideo(File file) async {
     var uri = await getUserEndpoint() + "media/upload";
     dio.interceptors.addAll([
