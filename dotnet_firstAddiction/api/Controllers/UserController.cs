@@ -5,10 +5,13 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using api.Commands;
+using api.Models;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -20,15 +23,23 @@ namespace api.Controllers
     {
         public UserController(
             IMediator mediator,
-            IConfiguration config)
+            IConfiguration config,
+            FirstAddictionContext context,
+            IMapper mapper)
         {
             this.Mediator = mediator;
             this.Config = config;
+            this.Context = context;
+            this.Mapper = mapper;
         }
 
         private IMediator Mediator { get; }
 
         private IConfiguration Config { get; }
+
+        private FirstAddictionContext Context { get; }
+
+        private IMapper Mapper { get; }
 
         [HttpPost("create")]
         [AllowAnonymous]
@@ -92,6 +103,20 @@ namespace api.Controllers
                     HandlerName = name
                 });
             return this.Ok();
+        }
+
+        [HttpGet("getInfo")]
+        [Authorize]
+        public IActionResult GetInfo()
+        {
+
+            var currentUser = HttpContext.User;
+            var id = Int32.Parse(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            var user = this.Context.User
+                .Include(u => u.UserInfo)
+                .Where(u => u.Id == id)
+                .SingleOrDefault();
+            return this.Ok(this.Mapper.Map<Dtos.UserInfo>(user.UserInfo));
         }
 
         private string GenerateJSONWebToken(int userId)
