@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_first_addiction/Configuration/AppConfig.dart';
 import 'package:flutter_first_addiction/Managers/DBManager.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,7 @@ import 'package:http/http.dart' as http;
 class RequestManager {
   RequestManager._();
   static final RequestManager web = RequestManager._();
+  Dio dio = new Dio();
   // static final String baseUrl = "http://192.168.0.41/";
   // static final String baseUrl = config.s;
   // static final String userUrl = baseUrl + "user/";
@@ -60,5 +62,26 @@ class RequestManager {
         return true;
       }
       return false;
+  }
+
+  Future<bool> uploadVideo(File file) async {
+    var uri = await getUserEndpoint() + "media/upload";
+    dio.interceptors.addAll([
+      InterceptorsWrapper(onRequest: (options) {
+        dio.lock();
+        dio.options.headers[HttpHeaders.authorizationHeader] = 'Bearer ' + token;
+        dio.unlock();
+      })
+    ]);
+    var size = await file.length();
+    var form = new FormData.fromMap({
+      "video": await MultipartFile.fromFile(file.path)
+    });
+
+    var response = await dio.post(uri, data: form);
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
   }
 }

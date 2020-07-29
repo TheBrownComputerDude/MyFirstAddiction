@@ -31,6 +31,7 @@ dependencies:
   thumbnails:
   esys_flutter_share:
   video_thumbnail: ^0.2.2
+  dio:
 
 
 

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_first_addiction/Managers/RequestManager.dart';
 import 'package:video_player/video_player.dart';
 
 class NewVideoPreview extends StatefulWidget {
@@ -69,8 +70,8 @@ class NewVideoPreviewState extends State<NewVideoPreview> {
             children: <Widget>[
               new IconButton(
                 icon: new Icon(Icons.save),
-                onPressed: () {
-
+                onPressed: () async {
+                  await RequestManager.web.uploadVideo(new File(widget.path));
                 }
               ),
               new IconButton(
