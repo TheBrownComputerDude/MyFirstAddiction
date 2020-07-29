@@ -14,6 +14,8 @@ namespace api.Models
                     Username = u.Username,
                     Email = u.Email
                 });
+
+            this.CreateMap<UserInfo, Dtos.UserInfo>();
         }
     }
 }

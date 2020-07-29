@@ -11,5 +11,7 @@ namespace api.Models
         public string Password { get; set; }
 
         public string Salt { get; set; }
+
+        public UserInfo UserInfo { get; set; }
     }
 }

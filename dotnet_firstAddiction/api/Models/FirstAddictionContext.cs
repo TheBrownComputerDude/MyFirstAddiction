@@ -31,6 +31,10 @@ namespace api.Models
                 e.Property(u => u.Password).IsRequired();
                 e.Property(u => u.Salt).IsRequired();
             });
+            modelBuilder.Entity<UserInfo>(e => 
+            {
+                e.HasKey(u => u.Id);
+            });
         }
     }
 }

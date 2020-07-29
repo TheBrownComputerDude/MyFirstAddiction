@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using api.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -74,6 +75,23 @@ namespace api.Controllers
             var currentUser = HttpContext.User;
             var id = currentUser.Claims.FirstOrDefault(c => c.Type == "UserId");
             return this.Ok($"It works. User id is {id}");
+        }
+
+        [HttpPost("updateInfo")]
+        [Authorize]
+        public async Task<IActionResult> Update(IFormCollection collection)
+        {
+            if (!collection.Keys.Contains("handleName"))
+            {
+                return this.BadRequest();
+            }
+            var name = collection["handleName"].FirstOrDefault();
+            
+            var result = await this.Mediator.Send(new UpdateUserInfoCommand()
+                {
+                    HandlerName = name
+                });
+            return this.Ok();
         }
 
         private string GenerateJSONWebToken(int userId)
