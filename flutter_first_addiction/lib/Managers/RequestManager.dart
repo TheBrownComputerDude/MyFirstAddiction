@@ -107,7 +107,5 @@ class RequestManager {
       return result;
     }
     return new List<int>();
-
-
   }
 }
