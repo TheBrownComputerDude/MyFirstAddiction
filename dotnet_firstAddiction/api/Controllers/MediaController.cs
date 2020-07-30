@@ -53,7 +53,7 @@ namespace api.Controllers {
         }
 
         [HttpGet("thumbnail")]
-        [Authorize]
+        [AllowAnonymous]
         public IActionResult GetVideoThumbnail(int videoId)
         {
             var video = this.Context.Video

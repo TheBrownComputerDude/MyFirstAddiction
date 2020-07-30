@@ -93,4 +93,21 @@ class RequestManager {
     }
     return false;
   }
+
+  Future<List<int>> getVideoIds() async {
+    var uri = await getUserEndpoint() + "user/videos";
+    var op = new Options(headers: {
+      HttpHeaders.authorizationHeader:"Bearer " + token
+    });
+    var response = await dio.get(uri,  options: op);
+
+    if (response.statusCode == 200)
+    {
+      List<int> result = response.data.cast<int>();
+      return result;
+    }
+    return new List<int>();
+
+
+  }
 }

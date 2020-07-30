@@ -18,8 +18,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-
   String handle = '';
+  List<int> videoIds;
 
   Future<List<FileSystemEntity>> getAllVideos() async {
     handle = await RequestManager.web.getInfo();
@@ -28,6 +28,8 @@ class ProfilePageState extends State<ProfilePage> {
        new MaterialPageRoute(
               builder: (context) => new GetHandleNamePage()));
     }
+    videoIds = await RequestManager.web.getVideoIds();
+
     final Directory extDir = await getApplicationDocumentsDirectory();
     final String dirPath = '${extDir.path}/media';
     final myDir = Directory(dirPath);
@@ -68,7 +70,8 @@ class ProfilePageState extends State<ProfilePage> {
             (index) {
               return new Card(
                 child: new InkWell(
-                  child: new Text(snapshot.data[index].path),
+                  // child: new Text(snapshot.data[index].path),
+                  child: Image.network("http://10.0.0.176/media/thumbnail?videoId=${videoIds[index]}"),
                   onTap: () async {
                     await Navigator.push(
                       context,
