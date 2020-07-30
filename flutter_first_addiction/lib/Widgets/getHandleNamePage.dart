@@ -10,11 +10,60 @@ class GetHandleNamePage extends StatefulWidget{
 }
 
 class GetHandleNamePageState extends State<GetHandleNamePage> {
+
+  TextEditingController nickname = new TextEditingController();
+  TextEditingController nickname2 = new TextEditingController();
+  String errorMsg = "";
+
   @override
   Widget build(BuildContext context) {
 
     return new Scaffold(
-      body: new Text("Whatever I guess")
+      appBar: AppBar(
+        title: const Text('Whatever I guess'),
+      ),
+      body: new Container(
+        child: new Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Text(errorMsg),
+            new TextField(
+              controller: nickname,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                hintText: "Nickname",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(32.0)
+                )
+              ),
+            ),
+          SizedBox(height: 20),
+          new TextField(
+            controller: nickname2,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+              hintText: "Nickname",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(32.0)
+              )
+            ),
+          ),
+          new RaisedButton(
+            child: new Text(
+              'Submit'
+            ),
+            onPressed: (){
+              if (nickname.text.isEmpty || nickname2.text.isEmpty) {
+                setState(() {
+                  errorMsg = "Not all fields have been filled in";
+                });
+                return;
+              }
+              
+            })
+          ]
+        )
+      )
     );
   }
 
