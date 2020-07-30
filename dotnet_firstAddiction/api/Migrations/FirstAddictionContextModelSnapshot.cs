@@ -63,11 +63,41 @@ namespace api.Migrations
                     b.ToTable("UserInfo");
                 });
 
+            modelBuilder.Entity("api.Models.Video", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ThumbnailLocation")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Video");
+                });
+
             modelBuilder.Entity("api.Models.User", b =>
                 {
                     b.HasOne("api.Models.UserInfo", "UserInfo")
                         .WithMany()
                         .HasForeignKey("UserInfoId");
+                });
+
+            modelBuilder.Entity("api.Models.Video", b =>
+                {
+                    b.HasOne("api.Models.User", "User")
+                        .WithMany("Videos")
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

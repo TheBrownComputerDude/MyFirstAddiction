@@ -13,6 +13,8 @@ namespace api.Models
         private IDbManager Manager { get; set; }
 
         public DbSet<User> User { get; set; }
+
+        public DbSet<Video> Video { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -34,6 +36,14 @@ namespace api.Models
             modelBuilder.Entity<UserInfo>(e => 
             {
                 e.HasKey(u => u.Id);
+            });
+
+            modelBuilder.Entity<Video>(e =>
+            {
+                e.HasKey(u => u.Id);
+                e.Property(u => u.Location).IsRequired();
+                e.HasOne(u => u.User)
+                    .WithMany(u => u.Videos);
             });
         }
     }

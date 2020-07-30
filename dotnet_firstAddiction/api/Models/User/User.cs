@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace api.Models
 {
     public class User
@@ -13,5 +15,7 @@ namespace api.Models
         public string Salt { get; set; }
 
         public UserInfo UserInfo { get; set; }
+
+        public IList<Video> Videos { get; set; }
     }
 }
