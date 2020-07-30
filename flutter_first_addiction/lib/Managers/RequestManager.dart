@@ -74,24 +74,20 @@ class RequestManager {
     if(response.statusCode == 204){
       return '';
     }
-    return response.data["Handle Name"];
+    return response.data["handleName"];
   }
 
   Future<bool> uploadVideo(File file) async {
     var uri = await getUserEndpoint() + "media/upload";
-    dio.interceptors.addAll([
-      InterceptorsWrapper(onRequest: (options) {
-        dio.lock();
-        dio.options.headers[HttpHeaders.authorizationHeader] = 'Bearer ' + token;
-        dio.unlock();
-      })
-    ]);
+    var op = new Options(headers: {
+      HttpHeaders.authorizationHeader:"Bearer " + token
+    });
     var size = await file.length();
     var form = new FormData.fromMap({
       "video": await MultipartFile.fromFile(file.path)
     });
 
-    var response = await dio.post(uri, data: form);
+    var response = await dio.post(uri, data: form, options: op);
     if (response.statusCode == 200) {
       return true;
     }

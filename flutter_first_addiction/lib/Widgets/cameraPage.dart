@@ -116,7 +116,7 @@ class CameraPageState extends State<CameraPage> {
             videoDuration = videoTime;
           });
           timer.cancel();
-          await Navigator.push(
+          await Navigator.pushReplacement(
             context,
             new MaterialPageRoute(
               builder: (context) => new NewVideoPreview(filePath)));

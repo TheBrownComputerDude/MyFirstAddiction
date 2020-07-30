@@ -23,11 +23,10 @@ class ProfilePageState extends State<ProfilePage> {
 
   Future<List<FileSystemEntity>> getAllVideos() async {
     handle = await RequestManager.web.getInfo();
-    if(handle.isEmpty){
-      Navigator.push(context, 
+    if(handle == null || handle.isEmpty){
+      Navigator.pushReplacement(context, 
        new MaterialPageRoute(
               builder: (context) => new GetHandleNamePage()));
-        
     }
     final Directory extDir = await getApplicationDocumentsDirectory();
     final String dirPath = '${extDir.path}/media';
