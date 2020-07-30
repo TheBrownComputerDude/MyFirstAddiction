@@ -42,6 +42,7 @@ namespace api.Models
             {
                 e.HasKey(u => u.Id);
                 e.Property(u => u.Location).IsRequired();
+                e.HasIndex(u => u.Location).IsUnique();
                 e.HasOne(u => u.User)
                     .WithMany(u => u.Videos);
             });

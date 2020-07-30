@@ -67,7 +67,9 @@ namespace api.Commands
             var video = new Video()
             {
                 Location = request.Location,
-                ThumbnailLocation = thumbnailPath
+                ThumbnailLocation = thumbnailPath,
+                ContentType = request.ContentType
+                
             };
 
             user.Videos.Add(video);

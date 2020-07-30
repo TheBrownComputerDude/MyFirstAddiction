@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using api.Commands;
+using api.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,12 +12,15 @@ namespace api.Controllers {
     [Route("media")]
     [ApiController]
     public class MediaController : Controller {
-        public MediaController(IMediator mediator)
+        public MediaController(IMediator mediator, FirstAddictionContext context)
         {
-            this.Mediator = mediator;   
+            this.Mediator = mediator;
+            this.Context = context;
         }
 
         private IMediator Mediator { get; }
+
+        private FirstAddictionContext Context { get; }
 
         [HttpPost("upload")]
         [RequestSizeLimit(10000000)]
@@ -41,10 +45,47 @@ namespace api.Controllers {
             }
             await this.Mediator.Send(new AddVideoCommand()
             {
-                Location = filePath
+                Location = filePath,
+                ContentType = video.ContentType
             });
 
             return this.Ok();
+        }
+
+        [HttpGet("thumbnail")]
+        [Authorize]
+        public IActionResult GetVideoThumbnail(int videoId)
+        {
+            var video = this.Context.Video
+                .Where(v => v.Id == videoId)
+                .SingleOrDefault();
+
+            if (video is null)
+            {
+                return this.BadRequest();
+            }
+            var fs = System.IO.File.OpenRead(video.ThumbnailLocation);
+            var data = new byte[fs.Length];
+            fs.Read(data, 0, data.Length);
+            return File(data, "image/jpeg");
+        }
+
+        [HttpGet("video")]
+        [Authorize]
+        public IActionResult GetVideo(int videoId)
+        {
+            var video = this.Context.Video
+                .Where(v => v.Id == videoId)
+                .SingleOrDefault();
+
+            if (video is null)
+            {
+                return this.BadRequest();
+            }
+            var fs = System.IO.File.OpenRead(video.Location);
+            var data = new byte[fs.Length];
+            fs.Read(data, 0, data.Length);
+            return File(data, video.ContentType);
         }
         
     }

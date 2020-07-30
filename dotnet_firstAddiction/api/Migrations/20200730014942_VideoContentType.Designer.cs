@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Models;
 
 namespace api.Migrations
 {
     [DbContext(typeof(FirstAddictionContext))]
-    partial class FirstAddictionContextModelSnapshot : ModelSnapshot
+    [Migration("20200730014942_VideoContentType")]
+    partial class VideoContentType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,7 +76,7 @@ namespace api.Migrations
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ThumbnailLocation")
                         .HasColumnType("text");
@@ -83,9 +85,6 @@ namespace api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Location")
-                        .IsUnique();
 
                     b.HasIndex("UserId");
 

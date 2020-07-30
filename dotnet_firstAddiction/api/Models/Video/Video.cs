@@ -6,6 +6,8 @@ namespace api.Models
 
         public string Location { get; set; }
 
+        public string ContentType { get; set; }
+
         public string ThumbnailLocation { get; set; }
 
         public User User { get; set; }
