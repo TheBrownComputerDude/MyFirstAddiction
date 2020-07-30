@@ -109,7 +109,6 @@ namespace api.Controllers
         [Authorize]
         public IActionResult GetInfo()
         {
-
             var currentUser = HttpContext.User;
             var id = Int32.Parse(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
             var user = this.Context.User
@@ -117,6 +116,27 @@ namespace api.Controllers
                 .Where(u => u.Id == id)
                 .SingleOrDefault();
             return this.Ok(this.Mapper.Map<Dtos.UserInfo>(user.UserInfo));
+        }
+
+        [HttpGet("videos")]
+        [Authorize]
+        public IActionResult GetAllVideos()
+        {
+            var user = GetUser();
+            var ids = user.Videos.Select(v => v.Id);
+            return this.Ok(ids);
+        }
+
+        private User GetUser()
+        {
+            var currentUser = HttpContext.User;
+            var id = Int32.Parse(currentUser.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            var user = this.Context.User
+                .Include(u => u.UserInfo)
+                .Include(u => u.Videos)
+                .Where(u => u.Id == id)
+                .SingleOrDefault();
+            return user;
         }
 
         private string GenerateJSONWebToken(int userId)

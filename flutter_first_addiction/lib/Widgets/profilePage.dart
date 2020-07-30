@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_first_addiction/Managers/RequestManager.dart';
 import 'package:flutter_first_addiction/Widgets/getHandleNamePage.dart';
-import 'package:flutter_first_addiction/Widgets/videoPreview.dart';
+import 'package:flutter_first_addiction/Widgets/videoPreview2.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:thumbnails/thumbnails.dart';
 import 'package:video_player/video_player.dart';
@@ -18,8 +18,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-
   String handle = '';
+  String path;
+  List<int> videoIds;
 
   Future<List<FileSystemEntity>> getAllVideos() async {
     handle = await RequestManager.web.getInfo();
@@ -28,6 +29,9 @@ class ProfilePageState extends State<ProfilePage> {
        new MaterialPageRoute(
               builder: (context) => new GetHandleNamePage()));
     }
+    videoIds = await RequestManager.web.getVideoIds();
+    path = await RequestManager.web.getUserEndpoint();
+
     final Directory extDir = await getApplicationDocumentsDirectory();
     final String dirPath = '${extDir.path}/media';
     final myDir = Directory(dirPath);
@@ -64,16 +68,17 @@ class ProfilePageState extends State<ProfilePage> {
         return GridView.count(
           crossAxisCount: 3,
           children: List<Widget>.generate(
-            snapshot.data.length,
+            videoIds.length,
             (index) {
               return new Card(
                 child: new InkWell(
-                  child: new Text(snapshot.data[index].path),
+                  // child: new Text(snapshot.data[index].path),
+                  child: Image.network(path + "media/thumbnail?videoId=${videoIds[index]}"),
                   onTap: () async {
                     await Navigator.push(
                       context,
                       new MaterialPageRoute(
-                        builder: (context) => new NewVideoPreview(snapshot.data[index].path)));
+                        builder: (context) => new NewVideoPreview2(videoIds[index], path)));
                     setState(() {});
                   },
                 ),

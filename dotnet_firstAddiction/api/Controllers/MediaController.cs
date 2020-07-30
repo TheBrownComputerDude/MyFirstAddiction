@@ -11,7 +11,8 @@ namespace api.Controllers {
 
     [Route("media")]
     [ApiController]
-    public class MediaController : Controller {
+    public class MediaController : Controller
+    {
         public MediaController(IMediator mediator, FirstAddictionContext context)
         {
             this.Mediator = mediator;
@@ -46,6 +47,7 @@ namespace api.Controllers {
             await this.Mediator.Send(new AddVideoCommand()
             {
                 Location = filePath,
+                // TODO change content types to be of video/.... if possible
                 ContentType = video.ContentType
             });
 
@@ -53,7 +55,7 @@ namespace api.Controllers {
         }
 
         [HttpGet("thumbnail")]
-        [Authorize]
+        [AllowAnonymous]
         public IActionResult GetVideoThumbnail(int videoId)
         {
             var video = this.Context.Video
@@ -71,21 +73,22 @@ namespace api.Controllers {
         }
 
         [HttpGet("video")]
-        [Authorize]
-        public IActionResult GetVideo(int videoId)
+        [AllowAnonymous]
+        public FileStreamResult GetVideo(int videoId)
         {
             var video = this.Context.Video
                 .Where(v => v.Id == videoId)
                 .SingleOrDefault();
 
-            if (video is null)
-            {
-                return this.BadRequest();
-            }
             var fs = System.IO.File.OpenRead(video.Location);
             var data = new byte[fs.Length];
             fs.Read(data, 0, data.Length);
-            return File(data, video.ContentType);
+            fs.Seek(0, SeekOrigin.Begin);
+            var type = Path.GetExtension(video.Location).Substring(1);
+            FileStreamResult result;
+
+            result = new FileStreamResult(fs, "video/" + type);
+            return result;
         }
         
     }

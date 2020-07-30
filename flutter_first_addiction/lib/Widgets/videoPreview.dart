@@ -77,6 +77,8 @@ class NewVideoPreviewState extends State<NewVideoPreview> {
                     context,
                     new MaterialPageRoute(
                       builder: (context) => new HomePage()));
+                  var f = new File(widget.path);
+                  f.deleteSync();
                 }
               ),
               new IconButton(
