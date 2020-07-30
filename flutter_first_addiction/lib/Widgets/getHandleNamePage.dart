@@ -40,7 +40,6 @@ class GetHandleNamePageState extends State<GetHandleNamePage> {
           SizedBox(height: 20),
           new TextField(
             controller: nickname2,
-            obscureText: true,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               hintText: "Nickname",
@@ -49,6 +48,19 @@ class GetHandleNamePageState extends State<GetHandleNamePage> {
               )
             ),
           ),
+          new RaisedButton(
+            child: new Text(
+              'Submit'
+            ),
+            onPressed: (){
+              if (nickname.text.isEmpty || nickname2.text.isEmpty) {
+                setState(() {
+                  errorMsg = "Not all fields have been filled in";
+                });
+                return;
+              }
+              
+            })
           ]
         )
       )
